@@ -146,3 +146,6 @@ Parameterized Remote Trigger#在流水线中触发另外的job插件，使用文
 ```
 
 2. Slave节点的镜像地址：  registry.cn-shenzhen.aliyuncs.com/hoover/hoover:jenkinslave2
+
+
+3. 进入jekins系统配置 ---> Global Trusted Pipeline Libraries 使用当前仓库配置好git共享库
