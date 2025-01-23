@@ -9,6 +9,8 @@ import pprint
 import copy
 
 
+# pip install api4jenkins python-jenkins jinja2 yaml -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple 安装模块
+
 def initLoger():
     import colorlog
     logger = colorlog.getLogger()

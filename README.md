@@ -103,5 +103,5 @@ namespaces:
 5. 渲染完成后提交代码： git add -A . && git commit -m 'update' && git push origin master 提交代码
 
 
-6. 执行 ./jenkins_tool_win64.exe -i ./configure/dev/demo.yaml 进行jenkins工程自动创建
+6. 执行 ./jenkins_tool.py -i ./configure/dev/demo.yaml 进行jenkins工程自动创建
 
