@@ -110,7 +110,7 @@ namespaces:
 # Jenkins Server安装
 
 
-1. Jenkins服务段需要安装的插件如下
+1. Jenkins服务需要安装的插件如下
 
 ```
 LDAP #插件
@@ -133,7 +133,6 @@ Material Theme #皮肤插件
 
 Active Choices #联动参数插件
 
-Audit Logging #登录审计插件
 
 build user vars #在系统配置中打开Enabled for all builds 就可以通过env.BUILD_USER获取构建用户
 
