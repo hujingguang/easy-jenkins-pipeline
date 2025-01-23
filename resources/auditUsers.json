@@ -1,0 +1,10 @@
+{
+  "mdm-versatile-prd": {
+    "webhook": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxxx",
+    "default":["xxxx","luo.jun28", "zong.ke1"]
+  },
+    "ipmp-prd": {
+    "webhook": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxxx",
+    "default":["xxxx","luo.jun28", "zong.ke1","duan.zongliang"]
+  }
+}

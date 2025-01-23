@@ -1,0 +1,185 @@
+@Library('shared-lib') _
+
+pipeline {
+    agent none
+    options {
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '7', daysToKeepStr: '7'))
+    }
+
+
+  parameters {
+    gitParameter branchFilter: 'origin/(.*)', quickFilterEnabled:true,defaultValue: 'master', name: 'BRANCH', type: 'PT_BRANCH',useRepository: 'http://code.xxx.com.cn/IPMP/IPMP-WEB.git',description: "请选择编译分支"
+    booleanParam(name: 'CLEAR_CACHE', defaultValue: false, description: '是否清理缓存 (例如 node_modules)')
+
+  }
+    stages{
+
+     stage("代码检出"){
+            agent {
+                node{
+                    label 'master'
+                }
+            }
+            steps {
+                script {
+                       cleanWs()
+                       buildUser  = getTriggerUser()
+                       currentBuild.displayName = "#${env.BUILD_NUMBER} - ${buildUser}"
+                       gitCheckout(BRANCH: params.BRANCH, gitAddr: "http://code.xxx.com.cn/IPMP/IPMP-WEB.git",authId: "gitUser" )
+                       stash name: 'source-code', includes: '**', excludes: 'node_modules/**'
+                }
+            }
+     }
+
+
+
+
+
+     stage('初始化') {
+            agent {
+                node{
+                    label 'k8s-slave02'
+                }
+            }
+
+       steps {
+             script {
+              stagesToExecute = ["imageUpdate", "Compile","imageBuild","healthCheck","archiveOutput"]
+              beforeDeployCheck.deployInterrupt(1)
+            }
+         }
+     }
+
+
+     stage("代码编译"){
+            agent {
+                node{
+                    label 'k8s-slave02'
+                }
+            }
+            when{
+              expression  { 'Compile' in stagesToExecute}
+            }
+            steps {
+
+              script{
+                try{
+                        webCompile(repoUrl: "http://hub.xxx.com:9081/repository/npm-group", nodeVersion: "node20", buildAction: "build", clearCache: params.CLEAR_CACHE)
+                   }catch(Exception e){
+                        echo "切换仓库进行重试........."
+                        webCompile(repoUrl: "https://registry.npmmirror.com", nodeVersion: "node20", buildAction: "build", clearCache: params.CLEAR_CACHE)
+                   }
+                   stash name: 'dist-dir', includes: 'dist/**'
+                }
+             }
+
+          }
+
+
+     stage("镜像构建"){
+            agent {
+                node{
+                    label 'slave01'
+                }
+            }
+            when{
+              expression  { 'imageBuild' in stagesToExecute}
+            }
+            steps {
+                script {
+                      cleanWs()
+                      unstash 'dist-dir'
+                      currentImageUrl = webImageBuild(PROJECT: "ipmp-uat", ENV_TYPE: "uat", IMG_BASE: 'docker.xxx.com/msp/nginx:1.24.0-exporter')
+                }
+            }
+     }
+
+
+      stage("应用更新"){
+            agent {
+                node{
+                    label 'slave01'
+                }
+            }
+            when{
+              expression  { 'imageUpdate' in stagesToExecute}
+            }
+            steps {
+                script {
+                      cleanWs()
+                      echo "应用开始更新"
+                      imageUpdate(SERVICE_NAME: "ipmp-web", NAMESPACE: "ipmp-uat", CLUSTER: "Hu_uat")
+                }
+            }
+       }
+
+      stage("健康检查"){
+            agent {
+                node{
+                    label 'k8s-slave02'
+                }
+            }
+            when{
+              expression  { 'healthCheck' in stagesToExecute}
+            }
+            steps {
+                 script {
+                      cleanWs()
+                      echo "更新的镜像地址: $currentImageUrl"
+                      if(currentImageUrl){
+                          healthCheck('ipmp-uat','ipmp-web',"300","Hu_uat",currentImageUrl)
+                          echo "检测完毕,应用已启动"
+
+                       }else{
+                           echoColor('镜像地址为空, 请检查应用是否则正确更新')
+                           error "终止发布"
+                         }
+                }
+            }
+       }
+
+
+      stage("输出物信息"){
+            agent {
+                node{
+                    label 'k8s-slave02'
+                }
+            }
+            when{
+              expression  { 'archiveOutput' in stagesToExecute}
+            }
+            steps {
+                 script {
+                      echo "更新的镜像地址: $currentImageUrl"
+                      if(currentImageUrl){
+                              echo "更新的镜像地址: $currentImageUrl"
+                              echo "发布的分支: $params.BRANCH"
+                       }
+                }
+            }
+       }
+
+
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

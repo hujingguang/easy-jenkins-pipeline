@@ -1,0 +1,71 @@
+global:
+  nodeLabel:
+    checkoutLabel: "master"
+    compileLabel: "k8s-slave01"
+    buildLabel: "slave01"
+    updateLabel: "slave01"
+    healCheckLabel: "k8s-slave02"
+  npmRepo:
+    external: "http://hub.xxx.com:9081/repository/npm-group"
+    internal: "https://registry.npmmirror.com"
+
+namespaces:
+  - namespace: ipmp-dev
+    dirPath: project/ipmp/dev
+    authId: "gitUser"
+    envType: dev
+    k8sConf: "Hu_uat"
+    jenkinsInfo:
+      jenkinsServer: http://10.28.20.11:32759
+      jenkinsUser: hu.jingguang
+      jenkinsToken: xxxx
+    jobInfo:
+      scmRepo: https://devops.xxx.com/zonghefuwuxinxibu/jenkins-auto.git
+      refresh: false
+      firstTrigger: false
+      scmCredentials: "devops-gitee"
+      scmBranch: '*/master'
+      scriptPath: project/ipmp/dev
+      lightCheckout: true
+      jobPath:
+        jobName: ipmp
+        jobDisplay: "产业规划-ipmp"
+        childPath:
+          jobName: dev
+          jobDisplay: "开发环境"
+
+
+    projects:
+      - service: ipmp-web
+        template: templates/dev/public-web.j2
+        params:
+          gitAddr: http://code.xxx.com.cn/IPMP/IPMP-WEB.git
+          nodeVersion: node18
+          dockerFrom: docker.xxx.com/msp/nginx:1.24.0-exporter
+          buildAction: "build"
+
+
+
+      - service: ipmp-service
+        template: templates/dev/public-java.j2
+        params:
+          gitAddr: http://code.xxx.com.cn/IPMP/IPMP.git
+          mvnVersion: maven396
+          subPath: xxx-module-ipmp/xxx-module-ipmp-biz
+          inBuild: 0
+          port: 8099
+          dockerFile: 2
+          dockerFrom: "docker.xxx.com/msp/openjdk:8u352b08-jmx-skywalking"
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,186 @@
+@Library('shared-lib') _
+
+pipeline {
+    agent none
+    options {
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '7', daysToKeepStr: '7'))
+    }
+
+
+  parameters {
+    gitParameter branchFilter: 'origin/(.*)', quickFilterEnabled:true,defaultValue: 'master', name: 'BRANCH', type: 'PT_BRANCH',useRepository: '{{gitAddr}}',description: "请选择编译分支"
+    booleanParam(name: 'CLEAR_CACHE', defaultValue: false, description: '是否清理缓存 (例如 node_modules)')
+
+  }
+    stages{
+
+     stage("代码检出"){
+            agent {
+                node{
+                    label '{{checkoutLabel}}'
+                }
+            }
+            steps {
+                script {
+                       cleanWs()
+                       buildUser  = getTriggerUser()
+                       currentBuild.displayName = "#${env.BUILD_NUMBER} - ${buildUser}"
+                       gitCheckout(BRANCH: params.BRANCH, gitAddr: "{{gitAddr}}",authId: "{{authId}}" )
+                       stash name: 'source-code', includes: '**', excludes: 'node_modules/**'
+                }
+            }
+     }
+
+
+
+
+
+     stage('初始化') {
+            agent {
+                node{
+                    label '{{compileLabel}}'
+                }
+            }
+
+       steps {
+             script {
+              stagesToExecute = ["imageUpdate", "Compile","imageBuild","healthCheck","archiveOutput"]
+              beforeDeployCheck.deployInterrupt(1)
+            }
+         }
+     }
+
+
+     stage("代码编译"){
+            agent {
+                node{
+                    label '{{compileLabel}}'
+                }
+            }
+            when{
+              expression  { 'Compile' in stagesToExecute}
+            }
+            steps {
+
+              script{
+                try{
+                        webCompile(repoUrl: "{{external}}", nodeVersion: "{{nodeVersion}}", buildAction: "{{buildAction}}", clearCache: params.CLEAR_CACHE)
+                   }catch(Exception e){
+                        echo "切换仓库进行重试........."
+                        webCompile(repoUrl: "{{internal}}", nodeVersion: "{{nodeVersion}}", buildAction: "{{buildAction}}", clearCache: params.CLEAR_CACHE)
+                   }
+                   stash name: 'dist-dir', includes: 'dist/**'
+                }
+             }
+
+          }
+
+
+     stage("镜像构建"){
+            agent {
+                node{
+                    label '{{ buildLabel }}'
+                }
+            }
+            when{
+              expression  { 'imageBuild' in stagesToExecute}
+            }
+            steps {
+                script {
+                      cleanWs()
+                      unstash 'dist-dir'
+                      currentImageUrl = webImageBuild(PROJECT: "{{namespace}}", ENV_TYPE: "{{envType}}", IMG_BASE: '{{dockerFrom}}')
+                }
+            }
+     }
+
+
+      stage("应用更新"){
+            agent {
+                node{
+                    label '{{updateLabel}}'
+                }
+            }
+            when{
+              expression  { 'imageUpdate' in stagesToExecute}
+            }
+            steps {
+                script {
+                      cleanWs()
+                      echo "应用开始更新"
+                      imageUpdate(SERVICE_NAME: "{{service}}", NAMESPACE: "{{namespace}}", CLUSTER: "{{k8sConf}}")
+                }
+            }
+       }
+
+      stage("健康检查"){
+            agent {
+                node{
+                    label '{{healCheckLabel}}'
+                }
+            }
+            when{
+              expression  { 'healthCheck' in stagesToExecute}
+            }
+            steps {
+                 script {
+                      cleanWs()
+                      echo "更新的镜像地址: $currentImageUrl"
+                      if(currentImageUrl){
+                          healthCheck('{{namespace}}','{{service}}',"300","{{k8sConf}}",currentImageUrl)
+                          echo "检测完毕,应用已启动"
+
+                       }else{
+                           echoColor('镜像地址为空, 请检查应用是否则正确更新')
+                           error "终止发布"
+                         }
+                }
+            }
+       }
+
+
+      stage("输出物信息"){
+            agent {
+                node{
+                    label '{{healCheckLabel}}'
+                }
+            }
+            when{
+              expression  { 'archiveOutput' in stagesToExecute}
+            }
+            steps {
+                 script {
+                      echo "更新的镜像地址: $currentImageUrl"
+                      if(currentImageUrl){
+                              echo "更新的镜像地址: $currentImageUrl"
+                              echo "发布的分支: $params.BRANCH"
+                       }
+                }
+            }
+       }
+
+
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
