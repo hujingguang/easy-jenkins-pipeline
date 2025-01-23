@@ -105,3 +105,45 @@ namespaces:
 
 6. 执行 ./jenkins_tool.py -i ./configure/dev/demo.yaml 进行jenkins工程自动创建
 
+
+
+# Jenkins Server安装
+
+
+1. Jenkins服务段需要安装的插件如下
+
+```
+LDAP #插件
+
+Login Page Theme #登录页自定义插件
+
+Parameter #流水线分支选择插件
+
+Pipeline Stage View #流水线stage视图显示
+
+Dashboard View  #doashboard 视图插件
+
+Distributed Workspace Clean #工作区清理插件
+
+Role-based Authorization Strategy #基于角色的权限管理插件
+
+AnsiColor # echo 颜色插件
+
+Material Theme #皮肤插件
+
+Active Choices #联动参数插件
+
+Audit Logging #登录审计插件
+
+build user vars #在系统配置中打开Enabled for all builds 就可以通过env.BUILD_USER获取构建用户
+
+Build Authorization Token Root # 直接token触发构建插件无需用户名，无需配置，区别于jenkins自己的API构建配置
+
+Performance  #jmeter性能测试结果显示插件
+
+Build Monitor #构建状态监控大盘插件
+
+Parameterized Remote Trigger#在流水线中触发另外的job插件，使用文档 https://github.com/jenkinsci/parameterized-remote-trigger-plugin/blob/master/README_PipelineConfiguration.md
+```
+
+2. Slave节点的镜像地址：  registry.cn-shenzhen.aliyuncs.com/hoover/hoover:jenkinslave2
