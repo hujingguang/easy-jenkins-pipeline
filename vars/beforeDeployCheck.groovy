@@ -53,7 +53,7 @@ def getAuditPerson(String nameSpace, String serviceName="default"){
 
 def checkImageUrl(String image_url, boolean stickCheck = true){
     echoColor(" 检查镜像地址格式: $image_url 是否合法","blue")
-    def parttern = /^(docker|hub)\.byd\.com\/(.+)\/(.+)\:(.+)/
+    def parttern = /^(docker|hub)\.xxx\.com\/(.+)\/(.+)\:(.+)/
     if(stickCheck && !image_url.contains(env.JOB_BASE_NAME)){
          error "镜像地址格式不正确，地址中没有包含服务名信息"
     }
@@ -61,7 +61,7 @@ def checkImageUrl(String image_url, boolean stickCheck = true){
        echoColor(" 镜像地址格式检测通过")
        echoColor(" 检查镜像地址是否在仓库存在: $image_url 是否合法","blue")
        imageParams = image_url.split(':')
-       def imageApiBase = imageParams[0].replace('docker.byd.com',"http://docker.byd.com:9081/repository/docker-group/v2").replace('hub.byd.com',"http://hub.byd.com:9081/repository/docker-group/v2")
+       def imageApiBase = imageParams[0].replace('docker.xxx.com',"http://docker.xxx.com:9081/repository/docker-group/v2").replace('hub.xxx.com',"http://hub.xxx.com:9081/repository/docker-group/v2")
        def imageTag = imageParams[1]
        def imageApi = imageApiBase + '/tags/list'
        def tagList = sh(script:"curl -s  $imageApi ||true ", returnStdout: true).trim()
@@ -72,7 +72,7 @@ def checkImageUrl(String image_url, boolean stickCheck = true){
            error "发布退出"
        }
     }else{
-       echoColor("镜像地址格式不正确，格式标准: docker.byd.com/命名空间/服务名:版本 不能包含空格!","red")
+       echoColor("镜像地址格式不正确，格式标准: docker.xxx.com/命名空间/服务名:版本 不能包含空格!","red")
        error "发布退出"
     }
 
