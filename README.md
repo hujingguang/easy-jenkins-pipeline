@@ -88,7 +88,7 @@ namespaces:
         params:
           gitAddr: http://code.xxx.com.cn/IPMP/IPMP.git
           mvnVersion: maven396                                #java编译使用maven工具,版本为 3.9.6
-          subPath: byd-module-ipmp/byd-module-ipmp-biz        #编译子目录相对位置，jar会在该目录下的target目录下生成
+          subPath: module-ipmp/module-ipmp-biz                #编译子目录相对位置，jar会在该目录下的target目录下生成
           inBuild: 0                                          #是否进入子目录里面编译，0表示不进入，1表示进入
           port: 8099                                          #服务监听端口
           dockerFile: 2                                       #Dockerfile类型，可选值为1,2,3 如果自己的Dockerfile不同，在 vars目录下的 javaImageBuild.groovy文件中配置
