@@ -160,7 +160,7 @@ Parameterized Remote Trigger#在流水线中触发另外的job插件，使用文
 
 1. 生产环境构建
 
-![](https://github.com/hujingguang/easy-jenkins-pipeline/blob/main/screens/3.png)
-
 ![](https://github.com/hujingguang/easy-jenkins-pipeline/blob/main/screens/4.png)
+
+![](https://github.com/hujingguang/easy-jenkins-pipeline/blob/main/screens/3.png)
 
