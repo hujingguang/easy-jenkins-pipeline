@@ -149,3 +149,18 @@ Parameterized Remote Trigger#在流水线中触发另外的job插件，使用文
 
 
 3. 进入jekins系统配置 ---> Global Trusted Pipeline Libraries 使用当前仓库配置好git共享库
+
+
+# 使用效果
+1. 测试环境构建
+
+![](https://github.com/hujingguang/easy-jenkins-pipeline/blob/main/screens/2.png)
+
+![](https://github.com/hujingguang/easy-jenkins-pipeline/blob/main/screens/1.png)
+
+1. 生产环境构建
+
+![](https://github.com/hujingguang/easy-jenkins-pipeline/blob/main/screens/3.png)
+
+![](https://github.com/hujingguang/easy-jenkins-pipeline/blob/main/screens/4.png)
+
