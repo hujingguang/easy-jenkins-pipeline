@@ -12,7 +12,7 @@ def call(Map params = [:]){
          BYD_ENV=`echo $JOB_NAME |awk -F '/' '{print $1}'|awk -F '-' '{print $NF}'`
          fi
          if [ x"$IMG_BASE" == xnull ];then
-         IMG_BASE=docker.byd.com/msp/nginx:1.24.0-exporter
+         IMG_BASE=docker.xxx.com/msp/nginx:1.24.0-exporter
          fi
          if [ x"$BYD_PROJECT" == x ] || [ x"$BYD_ENV" == x ];then
               echo "无法获取项目名 或 环境类型，请检查"
@@ -32,7 +32,7 @@ def call(Map params = [:]){
          echo "COPY ./dist/ /usr/share/nginx/html/" >> ./Dockerfile
          echo "EXPOSE 80" >> ./Dockerfile
          DATETIME=`date +"%Y%m%d%H%M%S"`
-         IMG_URL=docker.byd.com/$BYD_PROJECT/$JOB_BASE_NAME:$BYD_ENV-$SVC_COMMIT.$DATETIME
+         IMG_URL=docker.xxx.com/$BYD_PROJECT/$JOB_BASE_NAME:$BYD_ENV-$SVC_COMMIT.$DATETIME
          echo "当前生成的镜像构建地址： $IMG_URL"
          echo -e "\033[32m当前生成的镜像构建地址： $IMG_URL\033[0m"
          docker build -f ./Dockerfile -t $IMG_URL .

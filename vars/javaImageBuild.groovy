@@ -22,7 +22,7 @@ def call(Map params = [:]){
             TYPE=1
          fi
          if [ x"$IMG_BASE" == xnull ];then
-         IMG_BASE=hub.byd.com/pub-image/apache/skywalking-base:9.2
+         IMG_BASE=hub.xxx.com/pub-image/apache/skywalking-base:9.2
          fi
          if [ x"$BYD_PROJECT" == x ] || [ x"$BYD_ENV" == x ];then
               echo "无法获取项目名 或 环境类型，请检查"
@@ -63,7 +63,7 @@ EOF
 
          echo "写入1.Dockerfile"
          DATETIME=`date +"%Y%m%d%H%M%S"`
-         IMG_URL=docker.byd.com/$BYD_PROJECT/$JOB_BASE_NAME:$BYD_ENV-$SVC_COMMIT.$DATETIME
+         IMG_URL=docker.xxx.com/$BYD_PROJECT/$JOB_BASE_NAME:$BYD_ENV-$SVC_COMMIT.$DATETIME
          echo "当前生成的镜像构建地址： $IMG_URL"
          echo -e "\033[32m当前生成的镜像构建地址： $IMG_URL\033[0m"
          echo "当前选择的dockerfile文件: $TYPE.Dockerfile"

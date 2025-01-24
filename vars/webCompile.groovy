@@ -31,9 +31,9 @@ def call(Map params = [:]){
              npm install -g yarn -registry=$REPO
              yarn config set cache-folder /opt/.yarn_cache_$NODE_VERSION
              yarn config set registry $REPO
-             #echo "$REPO"|grep 'byd.com' &>/dev/null
+             #echo "$REPO"|grep 'xxx.com' &>/dev/null
              #if [ x"$?" == x0 ];then
-             yarn config set @msp:registry=http://hub.byd.com:9081/repository/npm-soft/
+             yarn config set @msp:registry=http://hub.xxx.com:9081/repository/npm-soft/
              #fi
              rm -rf package-lock.json
              yarn add core-js@3.40.0 1>/dev/null
