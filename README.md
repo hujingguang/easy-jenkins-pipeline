@@ -2,7 +2,7 @@
 
 ## 介绍
 
-jenkins CI/CD 框架 ，配置即流水线，将服务信息通过YAML配置后，使用jinja2 批量渲染出jenkinsfile 通过jenkins API自动化创建job 轻松管理和更新成百上千的服务
+jenkins CI/CD 框架 ，pipeline as code ，将服务信息通过YAML配置后，使用jinja2 批量渲染出jenkinsfile 通过jenkins API自动化创建job 轻松管理和更新成百上千的服务
 
 ## 目录说明
 
