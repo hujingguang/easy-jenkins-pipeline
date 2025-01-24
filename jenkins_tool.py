@@ -10,6 +10,11 @@ import jenkins
 from api4jenkins import Jenkins
 import time
 
+
+# pip install api4jenkins python-jenkins jinja2 yaml -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple 安装模块
+
+
+
 # 关闭 api4jenkins 的日志
 logging.getLogger("api4jenkins").setLevel(logging.CRITICAL)
 logging.getLogger("urllib3").setLevel(logging.CRITICAL)
